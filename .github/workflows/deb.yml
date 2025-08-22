@@ -32,7 +32,7 @@ jobs:
           artifacts: "$GITHUB_WORKSPACE/*.deb,$GITHUB_WORKSPACE/kernel/*.deb"
           tag: "${{ env.BUILD_TIME }}"
           bodyFile: "${{ env.BUILD_TIME }}"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.TOKEN }}
 
 
             
