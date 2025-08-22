@@ -1,0 +1,23 @@
+name: Deb Package
+on:
+  workflow_dispatch:
+    inputs:
+      SOURCE_CODE_URL:
+        description: 'SOURCE_CODE_URL'
+        required: true
+        default: 'https://github.com/microsoft/WSL2-Linux-Kernel/archive/refs/tags/linux-msft-wsl-6.6.87.2.tar.gz'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE
+      - uses: actions/checkout@v4
+      - name: Fetch Source Code
+        run: wget ${{ github.event.inputs.SOURCE_CODE_URL }} -O kernel.tar.gz 
+      # Runs a set of commands using the runners shell
+      - name: Configure Environment
+        run: sudo apt install build-essential flex bison dwarves libssl-dev libelf-dev cpio qemu-utils
+      - name: Adding Config
+        run: zcat $GITHUB_WORKSPACE/.config > kernel/.config
+      - name: Make
