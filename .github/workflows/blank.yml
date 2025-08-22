@@ -14,10 +14,29 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE
       - uses: actions/checkout@v4
       - name: Fetch Source Code
-        run: wget ${{ github.event.inputs.SOURCE_CODE_URL }} -O kernel.tar.gz 
+        run: |
+          cd $GITHUB_WORKSPACE
+          wget ${{ github.event.inputs.SOURCE_CODE_URL }} -O kernel.tar.gz
       # Runs a set of commands using the runners shell
       - name: Configure Environment
-        run: sudo apt install build-essential flex bison dwarves libssl-dev libelf-dev cpio qemu-utils
+        run: |
+          sudo apt install build-essential flex bison dwarves libssl-dev libelf-dev cpio qemu-utils
+          echo "BUILD_TIME=$(date +%s | md5sum | awk '{print substr($1,1,10)}')" >> $GITHUB_ENV
       - name: Adding Config
-        run: zcat $GITHUB_WORKSPACE/.config > kernel/.config
+        run: zcat $GITHUB_WORKSPACE/.config > $GITHUB_WORKSPACE/kernel/.config
       - name: Make
+        run: sudo make -j$(nproc) bindeb-pkg
+      - name: Release
+        uses: ncipollo/release-action@v1.8.0
+        with:
+          artifacts: "$GITHUB_WORKSPACE/*.deb,$GITHUB_WORKSPACE/kernel/*.deb"
+          tag: "${{ env.BUILD_TIME }}"
+          bodyFile: "${{ env.BUILD_TIME }}"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+
+            
+
+
+
+        
