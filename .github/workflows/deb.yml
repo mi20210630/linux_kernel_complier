@@ -20,7 +20,7 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Configure Environment
         run: |
-          sudo apt install build-essential flex bison dwarves libssl-dev libelf-dev cpio qemu-utils
+          sudo apt install build-essential flex bison dwarves libssl-dev libelf-dev cpio qemu-utils debhelper
           echo "BUILD_TIME=$(date +%s | md5sum | awk '{print substr($1,1,10)}')" >> $GITHUB_ENV
       - name: Adding Config
         run: zcat $GITHUB_WORKSPACE/config.gz > $GITHUB_WORKSPACE/kernel/.config
