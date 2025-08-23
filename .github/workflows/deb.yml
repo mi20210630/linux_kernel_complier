@@ -2,10 +2,10 @@ name: Deb Package
 on:
   workflow_dispatch:
     inputs:
-      SOURCE_CODE_URL:
-        description: 'SOURCE_CODE_URL'
+      SOURCE_GIT_URL:
+        description: 'SOURCE_GIT_URL'
         required: true
-        default: 'https://github.com/microsoft/WSL2-Linux-Kernel/archive/refs/tags/linux-msft-wsl-6.6.87.2.tar.gz'
+        default: 'https://github.com/microsoft/WSL2-Linux-Kernel.git'
 
 jobs:
   build:
@@ -16,7 +16,7 @@ jobs:
       - name: Fetch Source Code
         run: |
           cd $GITHUB_WORKSPACE
-          wget ${{ github.event.inputs.SOURCE_CODE_URL }} -O kernel.tar.gz
+          git clone ${{ github.event.inputs.SOURCE_GIT_URL }} kernel
       # Runs a set of commands using the runners shell
       - name: Configure Environment
         run: |
@@ -25,7 +25,9 @@ jobs:
       - name: Adding Config
         run: zcat $GITHUB_WORKSPACE/config.gz > $GITHUB_WORKSPACE/kernel/.config
       - name: Make
-        run: sudo make -j$(nproc) bindeb-pkg
+        run: |
+          cd $GITHUB_WORKSPACE/kernel
+          sudo make -j$(nproc) bindeb-pkg
       - name: Release
         uses: ncipollo/release-action@v1.8.0
         with:
