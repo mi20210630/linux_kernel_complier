@@ -6,7 +6,15 @@ on:
         description: 'SOURCE_GIT_URL'
         required: true
         default: 'https://github.com/microsoft/WSL2-Linux-Kernel.git'
-
+      SOURCENAME:
+        description: 'SOURCENAME'
+        required: true
+        default: 'linux-wsl2'
+      PKGVERSION:
+        description: 'PKGVERSION'
+        required: true
+        default: '6.6.87-2'
+        
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,7 +35,7 @@ jobs:
       - name: Make
         run: |
           cd $GITHUB_WORKSPACE/kernel
-          sudo make -j$(nproc) bindeb-pkg
+          make bindeb-pkg KDEB_SOURCENAME=${{ github.event.inputs.SOURCENAME }} KDEB_PKGVERSION=${{ github.event.inputs.PKGVERSION }} -j$(nproc)
       - name: Release
         uses: ncipollo/release-action@v1.8.0
         with:
