@@ -21,12 +21,11 @@ jobs:
         run: |
           sudo apt install build-essential flex bison dwarves libssl-dev libelf-dev cpio qemu-utils debhelper
           echo "BUILD_TIME=$(date +%s | md5sum | awk '{print substr($1,1,10)}')" >> $GITHUB_ENV
-      - name: Adding Config
+      - name: Add Config
         run: zcat $GITHUB_WORKSPACE/config.gz > $GITHUB_WORKSPACE/kernel/.config
       - name: Make
         run: |
           cd $GITHUB_WORKSPACE/kernel
-          sed -i 's/EXTRAVERSION = \(.*\)+/EXTRAVERSION = \1-/' Makefile
           sudo make bindeb-pkg -j$(nproc)
       - name: Release
         uses: ncipollo/release-action@v1.8.0
@@ -35,10 +34,17 @@ jobs:
           tag: "${{ env.BUILD_TIME }}"
           bodyFile: "${{ env.BUILD_TIME }}"
           token: ${{ secrets.TOKEN }}
-
-
-            
-
-
-
-        
+      - name: Unexpected Name
+        if: ${{ failure() }}
+        run: |
+          cd $GITHUB_WORKSPACE/kernel
+          find debian -type f -exec sed -i 's/\+/-/g' {} +
+          fakeroot make -f debian/rules binary-arch
+      - name: Failure Release
+        if: ${{ failure() }}
+        uses: ncipollo/release-action@v1.8.0
+        with:
+          artifacts: "$GITHUB_WORKSPACE/*.deb,$GITHUB_WORKSPACE/kernel/*.deb"
+          tag: "${{ env.BUILD_TIME }}"
+          bodyFile: "${{ env.BUILD_TIME }}"
+          token: ${{ secrets.TOKEN }} 
