@@ -26,8 +26,7 @@ jobs:
       - name: Make
         run: |
           cd $GITHUB_WORKSPACE/kernel
-          sed -i 's/+/\-/g' scripts/package/builddeb
-          sudo make -j$(nproc) bindeb-pkg
+          sudo make bindeb-pkg KDEB_ABINAME=unofficial -j$(nproc)
       - name: Release
         uses: ncipollo/release-action@v1.8.0
         with:
