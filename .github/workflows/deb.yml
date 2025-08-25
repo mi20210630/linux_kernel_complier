@@ -38,7 +38,7 @@ jobs:
         if: ${{ failure() }}
         run: |
           cd $GITHUB_WORKSPACE/kernel
-          find debian -type f -exec sed -i 's/\+/-/g' {} +
+          sudo find debian -type f -exec sed -i 's/\+/-/g' {} +
           fakeroot make -f debian/rules binary-arch
       - name: Failure Release
         if: ${{ failure() }}
