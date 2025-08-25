@@ -39,7 +39,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/kernel
           sudo find debian -type f -exec sed -i 's/\+/-/g' {} +
-          fakeroot make -f debian/rules binary-arch
+          sudo make -f debian/rules binary-arch
       - name: Failure Release
         if: ${{ failure() }}
         uses: ncipollo/release-action@v1.8.0
