@@ -38,7 +38,7 @@ jobs:
         if: ${{ failure() }}
         run: |
           cd $GITHUB_WORKSPACE/kernel
-          sudo find debian -type f -exec sed -i 's/\+/-/g' {} +
+          sed -Ei 's/EXTRAVERSION = (.*)\+$/EXTRAVERSION = \1-unofficial/' Makefile
           sudo make -f debian/rules binary-arch
       - name: Failure Release
         if: ${{ failure() }}
