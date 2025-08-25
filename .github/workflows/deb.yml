@@ -38,8 +38,9 @@ jobs:
         if: ${{ failure() }}
         run: |
           cd $GITHUB_WORKSPACE/kernel
-          sudo sed -Ei 's/^EXTRAVERSION\s*=\s*(.*[^a-zA-Z0-9])\+$/EXTRAVERSION = \1-unofficial/' Makefile
-          sudo make kernelrelease
+          sudo sed -i '/^Package:/s/+/-unofficial/g' debian/control
+          sudo sed -i '/linux-image/s/+/-unofficial/g' debian/changelog
+          sudo sed -i '/linux-image/s/+/-unofficial/g' debian/*.substvars
           sudo make -f debian/rules binary-arch
       - name: Failure Release
         if: ${{ failure() }}
