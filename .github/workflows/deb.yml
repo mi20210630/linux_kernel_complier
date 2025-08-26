@@ -38,7 +38,9 @@ jobs:
         if: ${{ failure() }}
         run: |
           cd $GITHUB_WORKSPACE/kernel
-          sudo sed -i '/linux-image/s/+/-wsl2/g' debian/control debian/changelog 
+          sudo mkdir -p include/config
+          sudo echo 'unofficial' > include/config/kernel.release
+          sudo make kernelrelease
           sudo make -f debian/rules binary-arch
       - name: Failure Release
         if: ${{ failure() }}
