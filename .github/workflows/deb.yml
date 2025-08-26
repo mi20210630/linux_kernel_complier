@@ -40,7 +40,6 @@ jobs:
           cd $GITHUB_WORKSPACE/kernel
           sudo sed -i '/^Package:/s/+/-unofficial/g' debian/control
           sudo sed -i '/linux-image/s/+/-unofficial/g' debian/changelog
-          sudo sed -i '/linux-image/s/+/-unofficial/g' debian/*.substvars
           sudo make -f debian/rules binary-arch
       - name: Failure Release
         if: ${{ failure() }}
