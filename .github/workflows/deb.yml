@@ -39,7 +39,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/kernel
           sudo mkdir -p include/config
-          sudo echo 'unofficial' > include/config/kernel.release
+          echo 'unofficial' | sudo tee include/config/kernel.release
           sudo make kernelrelease
           sudo make -f debian/rules binary-arch
       - name: Failure Release
